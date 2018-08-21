@@ -98,7 +98,7 @@ NSString * const kBAFluidViewCMMotionUpdate = @"BAFluidViewCMMotionUpdate";
         self.minAmplitude = aMinAmplitude;
         self.amplitudeIncrement = aAmplitudeIncrement;
         self.amplitudeArray = [self createAmplitudeOptions];
-        [self setStartElavation:aStartElevation];;
+        [self updateStartElevation:aStartElevation];;
     }
     return self;
 }
@@ -123,7 +123,7 @@ NSString * const kBAFluidViewCMMotionUpdate = @"BAFluidViewCMMotionUpdate";
     if (self)
     {
         [self initialize];
-        [self setStartElavation:aStartElevation];
+        [self updateStartElevation:aStartElevation];
     }
     return self;
 }
@@ -198,15 +198,6 @@ NSString * const kBAFluidViewCMMotionUpdate = @"BAFluidViewCMMotionUpdate";
     _fillRepeatCount= fillRepeatCount;
 }
 
-- (void)setStartElavation:(NSNumber *)startElavation {
-    _startElavation = startElavation;
-    CGRect frame = self.lineLayer.frame;
-    frame.origin.y = CGRectGetHeight(self.rootView.frame)*((1-_startElavation.floatValue));
-    self.lineLayer.frame = frame;
-    self.primativeStartElevation = startElavation.doubleValue;
-    
-}
-
 - (void)setMaxAmplitude:(int)maxAmplitude {
     _maxAmplitude = maxAmplitude;
     self.amplitudeArray = [self createAmplitudeOptions];
@@ -261,6 +252,7 @@ NSString * const kBAFluidViewCMMotionUpdate = @"BAFluidViewCMMotionUpdate";
     self.startElevation = @0;
     self.fillDuration = 7.0;
     self.finalX = 5*self.waveLength;
+    self.horizontalAnimationDuration = 1.0;
     
     //available amplitudes
     self.amplitudeArray = [NSArray arrayWithArray:[self createAmplitudeOptions]];
@@ -320,7 +312,7 @@ NSString * const kBAFluidViewCMMotionUpdate = @"BAFluidViewCMMotionUpdate";
         horizontalAnimation.values = @[@(self.lineLayer.position.x-self.waveLength*2),@(self.lineLayer.position.x-self.waveLength)];
         
         
-        horizontalAnimation.duration = 1.0;
+        horizontalAnimation.duration = self.horizontalAnimationDuration;
         horizontalAnimation.repeatCount = HUGE;
         horizontalAnimation.removedOnCompletion = NO;
         horizontalAnimation.fillMode = kCAFillModeForwards;
@@ -339,7 +331,7 @@ NSString * const kBAFluidViewCMMotionUpdate = @"BAFluidViewCMMotionUpdate";
                                                              selector:@selector(updateWaveCrestAnimation)
                                                              userInfo:nil
                                                               repeats:YES];
-        
+        [self.waveCrestTimer fire];
         //check if we're adding tiltAnimations, otherwise add straight to view
         if(self.roll){
             [self startTiltAnimation];
@@ -415,6 +407,15 @@ NSString * const kBAFluidViewCMMotionUpdate = @"BAFluidViewCMMotionUpdate";
 
 #pragma mark - Private
 
+- (void)updateStartElevation:(NSNumber *)startElevation {
+    self.startElevation = startElevation;
+    CGRect frame = self.lineLayer.frame;
+    frame.origin.y = CGRectGetHeight(self.rootView.frame)*((1-startElevation.floatValue));
+    self.lineLayer.frame = frame;
+    self.primativeStartElevation = startElevation.doubleValue;
+    
+}
+
 - (void)reInitializeLayer {
     //This method occurs when the device is rotated
     
@@ -440,7 +441,7 @@ NSString * const kBAFluidViewCMMotionUpdate = @"BAFluidViewCMMotionUpdate";
     
     //for some reason I can't access _startElevation, but a primitive can be accessed. Right now
     //all this does is redo the elevation adjustment due to change in height of device
-    self.startElavation = @(self.primativeStartElevation);
+    self.startElevation = @(self.primativeStartElevation);
     
     
     //the animation for fill will have to repeat as the height as changed
@@ -544,7 +545,7 @@ NSString * const kBAFluidViewCMMotionUpdate = @"BAFluidViewCMMotionUpdate";
     startPoint = CGPointMake(0,0);
     
     //grabbing random amplitude to shrink/grow to
-    NSNumber *index = [NSNumber numberWithInt:arc4random_uniform(7)];
+    NSNumber *index = [NSNumber numberWithInt:arc4random_uniform((u_int32_t)self.amplitudeArray.count)];
     
     int finalAmplitude = [[self.amplitudeArray objectAtIndex:index.intValue] intValue];
     NSMutableArray *values = [[NSMutableArray alloc] init];
