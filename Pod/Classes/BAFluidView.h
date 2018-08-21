@@ -71,6 +71,8 @@ Changes the fill color of the wave animation
  */
 @property (assign,nonatomic) int minAmplitude;
 
+@property (assign,nonatomic) int waveLength;//** 2 UIBezierPaths = 1 wavelength
+
 /**
  Notification message string for tilt animations
  */

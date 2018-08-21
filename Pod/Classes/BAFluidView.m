@@ -44,7 +44,6 @@ NSString * const kBAFluidViewCMMotionUpdate = @"BAFluidViewCMMotionUpdate";
 
 @property (assign,nonatomic) BOOL animating;
 
-@property (assign,nonatomic) int waveLength;//** 2 UIBezierPaths = 1 wavelength
 @property (assign,nonatomic) int finalX;
 
 @property (strong,nonatomic) CAKeyframeAnimation *waveCrestAnimation;
