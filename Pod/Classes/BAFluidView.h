@@ -71,6 +71,8 @@ Changes the fill color of the wave animation
  */
 @property (assign,nonatomic) int minAmplitude;
 
+@property CFTimeInterval horizontalAnimationDuration;
+
 /**
  Notification message string for tilt animations
  */

@@ -252,6 +252,7 @@ NSString * const kBAFluidViewCMMotionUpdate = @"BAFluidViewCMMotionUpdate";
     self.startElevation = @0;
     self.fillDuration = 7.0;
     self.finalX = 5*self.waveLength;
+    self.horizontalAnimationDuration = 1.0;
     
     //available amplitudes
     self.amplitudeArray = [NSArray arrayWithArray:[self createAmplitudeOptions]];
@@ -311,7 +312,7 @@ NSString * const kBAFluidViewCMMotionUpdate = @"BAFluidViewCMMotionUpdate";
         horizontalAnimation.values = @[@(self.lineLayer.position.x-self.waveLength*2),@(self.lineLayer.position.x-self.waveLength)];
         
         
-        horizontalAnimation.duration = 1.0;
+        horizontalAnimation.duration = self.horizontalAnimationDuration;
         horizontalAnimation.repeatCount = HUGE;
         horizontalAnimation.removedOnCompletion = NO;
         horizontalAnimation.fillMode = kCAFillModeForwards;
